@@ -1,9 +1,13 @@
-import roller
+from typing import List
+from fastapi import FastAPI, Query
+from generator import generate_character, Character
 
-def main():
-    print("Hello from dccgenerator!")
-    print("Roll: "+str(roller.roll('2d6+1')))
+app = FastAPI()
 
-
-if __name__ == "__main__":
-    main()
+@app.get("/generate-characters", response_model=List[Character])
+def get_characters(count: int = Query(1,ge=1, le=100)):
+    """
+    Generate 1 or more characters.
+    `count` must be between 1 and 100 (inclusive).
+    """
+    return [generate_character() for _ in range(count)]
